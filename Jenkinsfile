@@ -6,15 +6,16 @@ pipeline {
     stages {
         stage('Install Dependencies') {
             steps {
-                // Use `docker run` to execute pip inside a Python container and write into the workspace
-                sh 'docker run --rm -v $PWD:/ws -w /ws python:3.10-slim pip install pylint'
+                // Install pylint directly on the agent (use --user to avoid permission issues)
+                sh 'python3 -m pip install --user --upgrade pip pylint'
             }
         }
         
         stage('Static Analysis (Pylint)') {
             steps {
-                // Run pylint inside the same Python image and write JSON report to the workspace
-                sh 'docker run --rm -v $PWD:/ws -w /ws python:3.10-slim pylint --rcfile=.pylintrc --output-format=json:pylint_report.json app.py'
+                // Run pylint directly on the agent; using python3 -m pylint ensures module is invoked even
+                // if the user-local bin dir is not on PATH.
+                sh 'python3 -m pylint --rcfile=.pylintrc --output-format=json:pylint_report.json app.py'
             }
             post {
                 always {
