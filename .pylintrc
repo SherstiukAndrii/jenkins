@@ -1,0 +1,8 @@
+[MASTER]
+ignore = venv, tests
+
+[MESSAGES CONTROL]
+disable=R0904, C0114
+
+[FORMAT]
+max-line-length=100
